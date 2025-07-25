@@ -1,8 +1,8 @@
-from flask import Flask
-from app import app_routes  # import Blueprint từ file app.py
+from app import create_app
+app = create_app()
 
-app = Flask(__name__)
-app.register_blueprint(app_routes)
+print("Hello, World")
+print(app.url_map)
 
 if __name__ == "__main__":
     app.run(debug=True)
