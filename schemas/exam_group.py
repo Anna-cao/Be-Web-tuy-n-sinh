@@ -1,5 +1,12 @@
 from marshmallow import Schema, fields, post_dump
 
+
+class APIResponse(Schema):
+    success = fields.Boolean()
+    message = fields.String()
+    data = fields.Dict(keys=fields.Str(), values=fields.Raw()) 
+
+
 class ExamGroupCreate(Schema):
     group_code = fields.String(required=True)
     description = fields.String(required=True)
@@ -13,11 +20,8 @@ class ExamGroupResponse(Schema):
 
     @post_dump
     def clean_output(self, data, **kwargs):
-       
         if 'group_code' in data and isinstance(data['group_code'], str):
             data['group_code'] = data['group_code'].strip().upper()
-
-        
         if 'description' in data and isinstance(data['description'], str):
             replacements = {
                 "Toan": "Toán",
@@ -31,5 +35,4 @@ class ExamGroupResponse(Schema):
             }
             for ascii_text, unicode_text in replacements.items():
                 data['description'] = data['description'].replace(ascii_text, unicode_text)
-
         return data

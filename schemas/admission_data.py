@@ -1,5 +1,13 @@
 from marshmallow import Schema, fields, post_dump
 
+
+class APIResponse(Schema):
+    success = fields.Boolean()
+    message = fields.String()
+    data = fields.Dict(keys=fields.Str(), values=fields.Raw()) 
+
+ 
+
 class AdmissionScoreCreate(Schema):
     university_id = fields.String(required=True)
     major_id = fields.String(required=True)
