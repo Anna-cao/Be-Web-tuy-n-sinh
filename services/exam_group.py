@@ -7,29 +7,29 @@ class ExamGroupService:
         return ExamGroup.query.all()
 
     @staticmethod
-    def get_by_code(group_code):
+    def get_by_id(group_code):
         return ExamGroup.query.get(group_code)
 
     @staticmethod
     def create(data):
-        exam_group = ExamGroup(**data)
-        db.session.add(exam_group)
+        group = ExamGroup(**data)
+        db.session.add(group)
         db.session.commit()
-        return exam_group
+        return group
 
     @staticmethod
     def update(group_code, data):
-        exam_group = ExamGroup.query.get(group_code)
-        if exam_group:
+        group = ExamGroup.query.get(group_code)
+        if group:
             for key, value in data.items():
-                setattr(exam_group, key, value)
+                setattr(group, key, value)
             db.session.commit()
-        return exam_group
+        return group
 
     @staticmethod
     def delete(group_code):
-        exam_group = ExamGroup.query.get(group_code)
-        if exam_group:
-            db.session.delete(exam_group)
+        group = ExamGroup.query.get(group_code)
+        if group:
+            db.session.delete(group)
             db.session.commit()
-        return exam_group
+        return group

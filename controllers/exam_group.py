@@ -1,48 +1,67 @@
-from flask import jsonify
-from services.exam_group import ExamGroupService
-from schemas.exam_group import ExamGroupCreate, ExamGroupUpdate, ExamGroupResponse, APIResponse
-from marshmallow import ValidationError
+from flask import request, jsonify
+from schemas.exam_group_schema import ExamGroupCreate, ExamGroupUpdate, ExamGroupResponse, APIResponse
+from services.exam_group_service import ExamGroupService
+
+group_create_schema = ExamGroupCreate()
+group_update_schema = ExamGroupUpdate()
+group_response_schema = ExamGroupResponse()
+api_response_schema = APIResponse()
 
 class ExamGroupController:
     @staticmethod
     def get_all():
-        groups = ExamGroupService.get_all()
-        result = ExamGroupResponse(many=True).dump(groups)
-        return jsonify(APIResponse().dump({"success": True, "message": "List of exam groups", "data": {"items": result}})), 200
+        data = ExamGroupService.get_all()
+        response = api_response_schema.dump({
+            "success": True,
+            "message": "List of exam groups",
+            "data": [group_response_schema.dump(g) for g in data]
+        })
+        return jsonify(response)
 
     @staticmethod
-    def get_by_id(id):
-        group = ExamGroupService.get_by_id(id)
-        if not group:
-            return jsonify(APIResponse().dump({"success": False, "message": "Exam group not found", "data": None})), 404
-        result = ExamGroupResponse().dump(group)
-        return jsonify(APIResponse().dump({"success": True, "message": "Exam group details", "data": result})), 200
+    def get_by_id(group_code):
+        g = ExamGroupService.get_by_id(group_code)
+        if not g:
+            return jsonify(api_response_schema.dump({"success": False, "message": "Not found", "data": {}})), 404
+        response = api_response_schema.dump({
+            "success": True,
+            "message": "Exam group found",
+            "data": group_response_schema.dump(g)
+        })
+        return jsonify(response)
 
     @staticmethod
-    def create(data):
-        try:
-            validated = ExamGroupCreate().load(data)
-            group = ExamGroupService.create(validated)
-            result = ExamGroupResponse().dump(group)
-            return jsonify(APIResponse().dump({"success": True, "message": "Exam group created successfully", "data": result})), 201
-        except ValidationError as err:
-            return jsonify(APIResponse().dump({"success": False, "message": err.messages, "data": None})), 400
+    def create():
+        data = group_create_schema.load(request.json)
+        g = ExamGroupService.create(data)
+        response = api_response_schema.dump({
+            "success": True,
+            "message": "Exam group created",
+            "data": group_response_schema.dump(g)
+        })
+        return jsonify(response), 201
 
     @staticmethod
-    def update(id, data):
-        try:
-            validated = ExamGroupUpdate().load(data)
-            group = ExamGroupService.update(id, validated)
-            if not group:
-                return jsonify(APIResponse().dump({"success": False, "message": "Exam group not found", "data": None})), 404
-            result = ExamGroupResponse().dump(group)
-            return jsonify(APIResponse().dump({"success": True, "message": "Exam group updated successfully", "data": result})), 200
-        except ValidationError as err:
-            return jsonify(APIResponse().dump({"success": False, "message": err.messages, "data": None})), 400
+    def update(group_code):
+        data = group_update_schema.load(request.json)
+        g = ExamGroupService.update(group_code, data)
+        if not g:
+            return jsonify(api_response_schema.dump({"success": False, "message": "Not found", "data": {}})), 404
+        response = api_response_schema.dump({
+            "success": True,
+            "message": "Exam group updated",
+            "data": group_response_schema.dump(g)
+        })
+        return jsonify(response)
 
     @staticmethod
-    def delete(id):
-        group = ExamGroupService.delete(id)
-        if not group:
-            return jsonify(APIResponse().dump({"success": False, "message": "Exam group not found", "data": None})), 404
-        return jsonify(APIResponse().dump({"success": True, "message": "Deleted successfully", "data": None})), 200
+    def delete(group_code):
+        g = ExamGroupService.delete(group_code)
+        if not g:
+            return jsonify(api_response_schema.dump({"success": False, "message": "Not found", "data": {}})), 404
+        response = api_response_schema.dump({
+            "success": True,
+            "message": "Exam group deleted",
+            "data": {}
+        })
+        return jsonify(response)

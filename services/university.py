@@ -1,35 +1,28 @@
-from models.university import University
-from database import db
-
-class UniversityService:
+class CRUDService:
     @staticmethod
-    def get_all():
-        return University.query.all()
-
+    def get_all(model):
+        return model.query.all()
+    
     @staticmethod
-    def get_by_id(id):
-        return University.query.get(id)
-
+    def get_by_id(model, id):
+        return model.query.get_or_404(id)
+    
     @staticmethod
-    def create(data):
-        university = University(**data)
-        db.session.add(university)
+    def create(model, data):
+        obj = model(**data)
+        db.session.add(obj)
         db.session.commit()
-        return university
-
+        return obj
+    
     @staticmethod
-    def update(id, data):
-        university = University.query.get(id)
-        if university:
-            for key, value in data.items():
-                setattr(university, key, value)
-            db.session.commit()
-        return university
-
+    def update(obj, data):
+        for k, v in data.items():
+            setattr(obj, k, v)
+        db.session.commit()
+        return obj
+    
     @staticmethod
-    def delete(id):
-        university = University.query.get(id)
-        if university:
-            db.session.delete(university)
-            db.session.commit()
-        return university
+    def delete(obj):
+        db.session.delete(obj)
+        db.session.commit()
+        return True

@@ -1,12 +1,5 @@
 from marshmallow import Schema, fields, post_dump
-
-
-class APIResponse(Schema):
-    success = fields.Boolean()
-    message = fields.String()
-    data = fields.Dict(keys=fields.Str(), values=fields.Raw()) 
-
- 
+from schemas.base import APIResponse
 
 class AdmissionScoreCreate(Schema):
     university_id = fields.String(required=True)
@@ -14,22 +7,26 @@ class AdmissionScoreCreate(Schema):
     group_code = fields.String(required=True)
     year = fields.Integer(required=True)
     min_score = fields.Float(required=True)
-    quota = fields.Integer()
+    quota = fields.Integer(required=True)
     note = fields.String()
 
 class AdmissionScoreUpdate(Schema):
-    min_score = fields.Float()
-    quota = fields.Integer()
-    note = fields.String()
-
-class AdmissionScoreResponse(Schema):
-    id = fields.Integer()
     university_id = fields.String()
     major_id = fields.String()
     group_code = fields.String()
     year = fields.Integer()
     min_score = fields.Float()
     quota = fields.Integer()
+    note = fields.String()
+
+class AdmissionScoreResponse(Schema):
+    id = fields.Int()
+    university_id = fields.String()
+    major_id = fields.String()
+    group_code = fields.String()
+    year = fields.Int()
+    min_score = fields.Float()
+    quota = fields.Int()
     note = fields.String()
     created_at = fields.DateTime()
     updated_at = fields.DateTime()

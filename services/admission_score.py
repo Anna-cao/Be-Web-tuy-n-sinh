@@ -1,4 +1,4 @@
-from models.admission_data import AdmissionScore
+from models.admission_score import AdmissionScore
 from database import db
 
 class AdmissionScoreService:
