@@ -11,17 +11,12 @@ uni_response_schema = UniversityResponse()
 api_response_schema = APIResponse()
 
 
-import uuid
-
 @university_bp.route("/", methods=["POST"])
 def create_university():
     data = uni_create_schema.load(request.json)
-    if "id" not in data or not data["id"]:
-        data["id"] = str(uuid.uuid4())[:10]  # tạo id ngắn tự động
     new_uni = University(**data)
     db.session.add(new_uni)
     db.session.commit()
-
     
     response = api_response_schema.dump({
         "success": True,

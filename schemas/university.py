@@ -1,9 +1,8 @@
-from schemas.base import APIResponse
 from marshmallow import Schema, fields, post_dump
-
+from schemas.base import APIResponse
 
 class UniversityCreate(Schema):
-    id = fields.String()
+    id = fields.String(required=True)
     name = fields.String(required=True)
     type = fields.String(required=True)
     city = fields.String(required=True)

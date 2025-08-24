@@ -23,7 +23,7 @@ class AdmissionScoreResponse(Schema):
 
     @post_dump
     def strip_fields(self, data, **kwargs):
-        for k, v in data.items():
-            if isinstance(v, str):
-                data[k] = v.strip()
+        for key, value in data.items():
+            if isinstance(value, str):
+                data[key] = value.strip()
         return data

@@ -1,5 +1,8 @@
+from marshmallow import Schema, fields, post_dump
+from schemas.base import APIResponse
+
 class MajorCreate(Schema):
-    id = fields.String(required=True)
+    major_id = fields.String(required=True)
     name = fields.String(required=True)
     group_major = fields.String(required=True)
 
@@ -8,7 +11,7 @@ class MajorUpdate(Schema):
     group_major = fields.String()
 
 class MajorResponse(Schema):
-    id = fields.String()
+    major_id = fields.String()
     name = fields.String()
     group_major = fields.String()
 
