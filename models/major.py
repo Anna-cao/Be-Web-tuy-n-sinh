@@ -3,12 +3,12 @@ from database import db
 class Major(db.Model):
     __tablename__ = "majors"
 
-    major_id = db.Column(db.String(10), primary_key=True)
+    id = db.Column(db.String(10), primary_key=True)
     name = db.Column(db.String(255), nullable=False)
-    group_major = db.Column(db.String(100))
+    university_id = db.Column(db.String(10), db.ForeignKey("universities.id"))
 
     # Relationship
     admission_scores = db.relationship("AdmissionScore", backref="major", lazy=True)
 
     def __repr__(self):
-        return f"<Major {self.major_id} - {self.name}>"
+        return f"<Major {self.id} - {self.name}>"

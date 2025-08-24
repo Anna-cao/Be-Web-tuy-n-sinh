@@ -3,7 +3,7 @@ from marshmallow import Schema, fields, post_dump
 
 
 class UniversityCreate(Schema):
-    id = fields.String(required=True)
+    id = fields.String()
     name = fields.String(required=True)
     type = fields.String(required=True)
     city = fields.String(required=True)

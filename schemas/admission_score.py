@@ -2,38 +2,28 @@ from marshmallow import Schema, fields, post_dump
 from schemas.base import APIResponse
 
 class AdmissionScoreCreate(Schema):
-    university_id = fields.String(required=True)
+    id = fields.String(required=True)
     major_id = fields.String(required=True)
     group_code = fields.String(required=True)
     year = fields.Integer(required=True)
-    min_score = fields.Float(required=True)
-    quota = fields.Integer(required=True)
-    note = fields.String()
+    score = fields.Float(required=True)
 
 class AdmissionScoreUpdate(Schema):
-    university_id = fields.String()
     major_id = fields.String()
     group_code = fields.String()
     year = fields.Integer()
-    min_score = fields.Float()
-    quota = fields.Integer()
-    note = fields.String()
+    score = fields.Float()
 
 class AdmissionScoreResponse(Schema):
-    id = fields.Int()
-    university_id = fields.String()
+    id = fields.String()
     major_id = fields.String()
     group_code = fields.String()
-    year = fields.Int()
-    min_score = fields.Float()
-    quota = fields.Int()
-    note = fields.String()
-    created_at = fields.DateTime()
-    updated_at = fields.DateTime()
+    year = fields.Integer()
+    score = fields.Float()
 
     @post_dump
     def strip_fields(self, data, **kwargs):
-        for key, value in data.items():
-            if isinstance(value, str):
-                data[key] = value.strip()
+        for k, v in data.items():
+            if isinstance(v, str):
+                data[k] = v.strip()
         return data
