@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flasgger import Swagger
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade
 from database import db
 from routes.university import university_bp
 from routes.major import major_bp
@@ -44,9 +44,14 @@ def create_app():
 # Khởi tạo app để Flask CLI nhận diện
 app = create_app()
 
+# Tự động áp dụng migration khi app start
+with app.app_context():
+    upgrade()
+
 if __name__ == "__main__":
     # In tất cả các route ra màn hình
     for rule in app.url_map.iter_rules():
         print(rule)
     port = int(os.getenv("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    # debug=False khi deploy production
+    app.run(host="0.0.0.0", port=port, debug=False)
