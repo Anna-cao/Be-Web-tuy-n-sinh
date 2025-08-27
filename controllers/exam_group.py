@@ -1,6 +1,6 @@
 from flask import request, jsonify
-from schemas.exam_group_schema import ExamGroupCreate, ExamGroupUpdate, ExamGroupResponse, APIResponse
-from services.exam_group_service import ExamGroupService
+from schemas.exam_group import ExamGroupCreate, ExamGroupUpdate, ExamGroupResponse, APIResponse
+from services.exam_group import ExamGroupService
 
 group_create_schema = ExamGroupCreate()
 group_update_schema = ExamGroupUpdate()

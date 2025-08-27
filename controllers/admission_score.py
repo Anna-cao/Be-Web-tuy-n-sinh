@@ -1,67 +1,43 @@
-from flask import request, jsonify
-from schemas.admission_score_schema import AdmissionScoreCreate, AdmissionScoreUpdate, AdmissionScoreResponse, APIResponse
-from services.admission_score_service import AdmissionScoreService
-
-score_create_schema = AdmissionScoreCreate()
-score_update_schema = AdmissionScoreUpdate()
-score_response_schema = AdmissionScoreResponse()
-api_response_schema = APIResponse()
+from flask import jsonify
+from services.admission_score import AdmissionScoreService
+from schemas.admission_score import AdmissionScoreCreate, AdmissionScoreUpdate, AdmissionScoreResponse
+from marshmallow import ValidationError
 
 class AdmissionScoreController:
     @staticmethod
     def get_all():
-        data = AdmissionScoreService.get_all()
-        response = api_response_schema.dump({
-            "success": True,
-            "message": "List of admission scores",
-            "data": [score_response_schema.dump(s) for s in data]
-        })
-        return jsonify(response)
+        return jsonify(AdmissionScoreResponse(many=True).dump(AdmissionScoreService.get_all())), 200
 
     @staticmethod
     def get_by_id(id):
-        s = AdmissionScoreService.get_by_id(id)
-        if not s:
-            return jsonify(api_response_schema.dump({"success": False, "message": "Not found", "data": {}})), 404
-        response = api_response_schema.dump({
-            "success": True,
-            "message": "Admission score found",
-            "data": score_response_schema.dump(s)
-        })
-        return jsonify(response)
+        score = AdmissionScoreService.get_by_id(id)
+        if not score:
+            return jsonify({"message": "Score not found"}), 404
+        return jsonify(AdmissionScoreResponse().dump(score)), 200
 
     @staticmethod
-    def create():
-        data = score_create_schema.load(request.json)
-        s = AdmissionScoreService.create(data)
-        response = api_response_schema.dump({
-            "success": True,
-            "message": "Admission score created",
-            "data": score_response_schema.dump(s)
-        })
-        return jsonify(response), 201
+    def create(data):
+        try:
+            validated = AdmissionScoreCreate().load(data)
+            score = AdmissionScoreService.create(validated)
+            return jsonify(AdmissionScoreResponse().dump(score)), 201
+        except ValidationError as err:
+            return jsonify(err.messages), 400
 
     @staticmethod
-    def update(id):
-        data = score_update_schema.load(request.json)
-        s = AdmissionScoreService.update(id, data)
-        if not s:
-            return jsonify(api_response_schema.dump({"success": False, "message": "Not found", "data": {}})), 404
-        response = api_response_schema.dump({
-            "success": True,
-            "message": "Admission score updated",
-            "data": score_response_schema.dump(s)
-        })
-        return jsonify(response)
+    def update(id, data):
+        try:
+            validated = AdmissionScoreUpdate().load(data)
+            score = AdmissionScoreService.update(id, validated)
+            if not score:
+                return jsonify({"message": "Score not found"}), 404
+            return jsonify(AdmissionScoreResponse().dump(score)), 200
+        except ValidationError as err:
+            return jsonify(err.messages), 400
 
     @staticmethod
     def delete(id):
-        s = AdmissionScoreService.delete(id)
-        if not s:
-            return jsonify(api_response_schema.dump({"success": False, "message": "Not found", "data": {}})), 404
-        response = api_response_schema.dump({
-            "success": True,
-            "message": "Admission score deleted",
-            "data": {}
-        })
-        return jsonify(response)
+        score = AdmissionScoreService.delete(id)
+        if not score:
+            return jsonify({"message": "Score not found"}), 404
+        return jsonify({"message": "Deleted successfully"}), 200

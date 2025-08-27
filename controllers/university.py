@@ -1,6 +1,6 @@
 from flask import request, jsonify
-from schemas.university_schema import UniversityCreate, UniversityUpdate, UniversityResponse, APIResponse
-from services.university_service import UniversityService
+from schemas.university import UniversityCreate, UniversityUpdate, UniversityResponse, APIResponse
+from services.university import UniversityService
 
 uni_create_schema = UniversityCreate()
 uni_update_schema = UniversityUpdate()
