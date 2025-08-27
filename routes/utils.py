@@ -64,7 +64,7 @@ def paginate_query(query, page, limit):
                    "total_pages": (total+limit-1)//limit,
                    "has_next": page*limit < total, "has_prev": page > 1}
 
-# ================= CRUD Handler ================= #
+#CRUD Handler
 def crud_handler(model, create_schema, update_schema, response_schema, api_response_schema, id_param="id"):
     cs, us, rs, api = create_schema(), update_schema(), response_schema(), api_response_schema()
 
