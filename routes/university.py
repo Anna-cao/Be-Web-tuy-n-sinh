@@ -1,82 +1,37 @@
-from flask import Blueprint, request, jsonify
+
+from flask import Blueprint
 from models.university import University
 from schemas.university import UniversityCreate, UniversityUpdate, UniversityResponse, APIResponse
 from database import db
+from routes.utils import swagger_decorator, crud_handler
 
 university_bp = Blueprint("university_bp", __name__)
 
-uni_create_schema = UniversityCreate()
-uni_update_schema = UniversityUpdate()
-uni_response_schema = UniversityResponse()
-api_response_schema = APIResponse()
-
-
-@university_bp.route("/", methods=["POST"])
-def create_university():
-    data = uni_create_schema.load(request.json)
-    new_uni = University(**data)
-    db.session.add(new_uni)
-    db.session.commit()
-    
-    response = api_response_schema.dump({
-        "success": True,
-        "message": "University created",
-        "data": uni_response_schema.dump(new_uni)
-    })
-    return jsonify(response), 201
-
+get_all, get_by_id, create, update, delete = crud_handler(
+    University, UniversityCreate, UniversityUpdate, UniversityResponse, APIResponse
+)
 
 @university_bp.route("/", methods=["GET"])
+@swagger_decorator("get_all", "University")
 def get_universities():
-    universities = University.query.all()
-    result = [uni_response_schema.dump(u) for u in universities]
-    
-    response = api_response_schema.dump({
-        "success": True,
-        "message": "List of universities",
-        "data": result
-    })
-    return jsonify(response)
-
+    return get_all()
 
 @university_bp.route("/<string:id>", methods=["GET"])
+@swagger_decorator("get_by_id", "University")
 def get_university(id):
-    uni = University.query.get_or_404(id)
-    response = api_response_schema.dump({
-        "success": True,
-        "message": "University found",
-        "data": uni_response_schema.dump(uni)
-    })
-    return jsonify(response)
+    return get_by_id(id)
 
+@university_bp.route("/", methods=["POST"])
+@swagger_decorator("create", "University")
+def create_university():
+    return create()
 
 @university_bp.route("/<string:id>", methods=["PUT"])
+@swagger_decorator("update", "University")
 def update_university(id):
-    uni = University.query.get_or_404(id)
-    data = uni_update_schema.load(request.json)
-    
-    for key, value in data.items():
-        setattr(uni, key, value)
-    
-    db.session.commit()
-    
-    response = api_response_schema.dump({
-        "success": True,
-        "message": "University updated",
-        "data": uni_response_schema.dump(uni)
-    })
-    return jsonify(response)
-
+    return update(id)
 
 @university_bp.route("/<string:id>", methods=["DELETE"])
+@swagger_decorator("delete", "University")
 def delete_university(id):
-    uni = University.query.get_or_404(id)
-    db.session.delete(uni)
-    db.session.commit()
-    
-    response = api_response_schema.dump({
-        "success": True,
-        "message": f"University {id} deleted",
-        "data": None
-    })
-    return jsonify(response)
+    return delete(id)

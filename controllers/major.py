@@ -1,6 +1,7 @@
+
 from flask import request, jsonify
-from schemas.major_schema import MajorCreate, MajorUpdate, MajorResponse, APIResponse
-from services.major_service import MajorService
+from schemas.major import MajorCreate, MajorUpdate, MajorResponse, APIResponse
+from services.major import MajorService
 
 major_create_schema = MajorCreate()
 major_update_schema = MajorUpdate()
